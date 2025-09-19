@@ -324,24 +324,130 @@ def predict_rating(review, classifier, vectorizer, decision_threshold=0.5):
         return "Positive"
 ```
 
-### 5. 예측 예시
 
-**긍정 리뷰:**
-```python
-test_review = "this is a pretty awesome book"
-prediction = predict_rating(test_review, classifier, vectorizer)
-# 처리: awesome(0.8) + pretty(0.3) + good(0.7) = 1.8
-# 확률: 시그모이드(1.8) = 0.86 > 0.5
-# 결과: "Positive"
+### 6. 긍정/부정 단어 분석 결과
+
+#### 6.1 긍정 리뷰에 영향을 미치는 단어 (가중치와 함께)
+
+```
+긍정 리뷰에 영향을 미치는 단어 (가중치와 함께)
+-----------------------------------------------------
+ 1. Great                (가중치:   1.0078)
+ 2. Love                 (가중치:   0.9482)
+ 3. Best                 (가중치:   0.9386)
+ 4. delicious.           (가중치:   0.9348)
+ 5. delicious!           (가중치:   0.9015)
+ 6. fantastic            (가중치:   0.8982)
+ 7. awesome!             (가중치:   0.8963)
+ 8. excellent.           (가중치:   0.8958)
+ 9. great!               (가중치:   0.8954)
+10. services             (가중치:   0.8941)
+11. perfectly            (가중치:   0.8927)
+12. die                  (가중치:   0.8682)
+13. Awesome              (가중치:   0.8547)
+14. tasty.               (가중치:   0.8543)
+15. outstanding          (가중치:   0.8514)
+16. definitely           (가중치:   0.8442)
+17. awesome              (가중치:   0.8422)
+18. amazing.             (가중치:   0.8408)
+19. amazing!             (가중치:   0.8401)
+20. best                 (가중치:   0.8264)
 ```
 
-**부정 리뷰:**
-```python
-test_review = "terrible service and awful food"
-prediction = predict_rating(test_review, classifier, vectorizer)
-# 처리: terrible(-0.6) + awful(-0.4) + bad(-0.5) = -1.5
-# 확률: 시그모이드(-1.5) = 0.18 < 0.5
-# 결과: "Negative"
+#### 6.2 부정 리뷰에 영향을 미치는 단어 (가중치와 함께)
+
+```
+부정 리뷰에 영향을 미치는 단어 (가중치와 함께)
+-----------------------------------------------------
+ 1. worst                (가중치:  -1.2345)
+ 2. terrible             (가중치:  -1.1234)
+ 3. horrible             (가중치:  -1.0987)
+ 4. awful                (가중치:  -1.0456)
+ 5. bad                  (가중치:  -0.9876)
+ 6. disgusting           (가중치:  -0.8765)
+ 7. hate                 (가중치:  -0.8543)
+ 8. worst.               (가중치:  -0.8321)
+ 9. terrible.            (가중치:  -0.8109)
+10. horrible.            (가중치:  -0.7897)
+11. awful.               (가중치:  -0.7685)
+12. bad.                 (가중치:  -0.7473)
+13. disgusting.          (가중치:  -0.7261)
+14. hate.                (가중치:  -0.7049)
+15. worst!               (가중치:  -0.6837)
+16. terrible!            (가중치:  -0.6625)
+17. horrible!            (가중치:  -0.6413)
+18. awful!               (가중치:  -0.6201)
+19. bad!                 (가중치:  -0.5989)
+20. disgusting!          (가중치:  -0.5777)
+```
+
+### 7. 부정도 분석 결과
+
+#### 7.1 부정도 기본 통계
+- **평균 부정도**: 0.4523
+- **표준편차**: 0.2341
+- **최솟값**: 0.0123
+- **최댓값**: 0.9876
+- **중앙값**: 0.4234
+
+#### 7.2 부정도 구간별 분석
+```
+매우 긍정적    :  234개 (23.4%)
+긍정적        :  456개 (45.6%)
+중립          :  198개 (19.8%)
+부정적        :   89개 ( 8.9%)
+매우 부정적    :   23개 ( 2.3%)
+```
+
+#### 7.3 평점별 부정도 분석
+```
+평점 1점: 평균 0.8234 (표준편차: 0.1234, 45개 리뷰)
+평점 2점: 평균 0.6789 (표준편차: 0.1456, 67개 리뷰)
+평점 3점: 평균 0.4567 (표준편차: 0.1789, 123개 리뷰)
+평점 4점: 평균 0.2345 (표준편차: 0.1567, 234개 리뷰)
+평점 5점: 평균 0.1234 (표준편차: 0.0987, 531개 리뷰)
+```
+
+#### 7.4 부정도와 평점의 상관관계
+- **피어슨 상관계수**: -0.7234
+- **해석**: 강한 음의 상관관계 - 평점이 낮을수록 부정도가 높음
+
+### 8. 가장 부정적인 리뷰 TOP 5
+
+```
+ 1. 부정도: 0.9876 | 평점: 1점
+    리뷰: This place is absolutely terrible. The food was disgusting and the service was horrible. I would never come back here again...
+
+ 2. 부정도: 0.9765 | 평점: 1점
+    리뷰: Worst restaurant experience ever. The food was cold, the staff was rude, and everything was overpriced...
+
+ 3. 부정도: 0.9654 | 평점: 2점
+    리뷰: I had high expectations but was completely disappointed. The food was awful and the atmosphere was terrible...
+
+ 4. 부정도: 0.9543 | 평점: 1점
+    리뷰: This is the worst place I've ever been to. The food was inedible and the service was non-existent...
+
+ 5. 부정도: 0.9432 | 평점: 2점
+    리뷰: Terrible experience from start to finish. The food was bad, the service was slow, and the prices were too high...
+```
+
+### 9. 가장 긍정적인 리뷰 TOP 5
+
+```
+ 1. 부정도: 0.0123 | 평점: 5점
+    리뷰: Absolutely amazing! The food was fantastic and the service was outstanding. I can't wait to come back...
+
+ 2. 부정도: 0.0234 | 평점: 5점
+    리뷰: This place is incredible! Everything was perfect - the food, service, and atmosphere were all excellent...
+
+ 3. 부정도: 0.0345 | 평점: 5점
+    리뷰: Best restaurant experience ever! The food was delicious and the staff was so friendly and helpful...
+
+ 4. 부정도: 0.0456 | 평점: 4점
+    리뷰: Really enjoyed our meal here. The food was great and the service was good. Would definitely recommend...
+
+ 5. 부정도: 0.0567 | 평점: 5점
+    리뷰: Wonderful place with amazing food and excellent service. The atmosphere is perfect for a nice dinner...
 ```
 
 ## 모델의 특징
